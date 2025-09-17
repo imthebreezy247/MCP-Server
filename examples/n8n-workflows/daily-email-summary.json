@@ -1,0 +1,106 @@
+{
+  "name": "Daily Email Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "command": "node dist/index.js",
+        "options": {
+          "cwd": "/path/to/MCP-Server"
+        }
+      },
+      "name": "Start MCP Server",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const tool = 'gmail_search_emails';\nconst args = {\n  query: 'is:unread',\n  maxResults: 50\n};\n\n// Simulate MCP tool call\nconst result = {\n  success: true,\n  emails: [\n    // Email objects would be here\n  ],\n  count: 0\n};\n\nreturn [{\n  json: {\n    tool: tool,\n    args: args,\n    result: result\n  }\n}];"
+      },
+      "name": "Get Unread Emails",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const emails = $json.result.emails;\nconst count = emails.length;\n\nif (count === 0) {\n  return [{\n    json: {\n      message: 'No unread emails',\n      skip: true\n    }\n  }];\n}\n\nlet summary = `You have ${count} unread email(s):\\n\\n`;\n\nfor (let i = 0; i < Math.min(emails.length, 10); i++) {\n  const email = emails[i];\n  const subject = email.payload.headers.find(h => h.name === 'Subject')?.value || 'No Subject';\n  const from = email.payload.headers.find(h => h.name === 'From')?.value || 'Unknown Sender';\n  summary += `${i + 1}. ${subject} (from: ${from})\\n`;\n}\n\nif (emails.length > 10) {\n  summary += `\\n... and ${emails.length - 10} more emails.`;\n}\n\nreturn [{\n  json: {\n    summary: summary,\n    count: count,\n    emails: emails\n  }\n}];"
+      },
+      "name": "Create Summary",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const tool = 'gmail_send_email';\nconst args = {\n  to: 'your-email@example.com',\n  subject: `Daily Email Summary - ${new Date().toDateString()}`,\n  body: $json.summary\n};\n\nreturn [{\n  json: {\n    tool: tool,\n    args: args\n  }\n}];"
+      },
+      "name": "Send Summary Email",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Start MCP Server",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start MCP Server": {
+      "main": [
+        [
+          {
+            "node": "Get Unread Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Unread Emails": {
+      "main": [
+        [
+          {
+            "node": "Create Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Summary": {
+      "main": [
+        [
+          {
+            "node": "Send Summary Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
