@@ -1,0 +1,14 @@
+# Gmail MCP Server Requirements
+# Core MCP Framework
+fastmcp>=0.4.0
+
+# Google API and Authentication
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+google-api-python-client>=2.100.0
+
+# HTTP Client for API requests
+httpx>=0.25.0
+
+# Additional utilities
+python-dateutil>=2.8.2
