@@ -76,17 +76,30 @@ class GmailMCPServer:
                     print("Since automatic browser opening failed, please follow these steps:")
                     print("\n1. Copy the URL below and paste it into a web browser:")
 
-                    # Generate authorization URL
-                    auth_url, _ = flow.authorization_url(prompt='consent')
+                    # Set redirect URI for manual flow
+                    flow.redirect_uri = 'http://localhost'
+
+                    # Generate authorization URL with proper parameters
+                    auth_url, _ = flow.authorization_url(
+                        access_type='offline',
+                        prompt='consent'
+                    )
                     print(f"\n{auth_url}\n")
 
                     print("2. Complete the authorization in your browser")
-                    print("3. Copy the authorization code from the browser")
-                    print("4. Paste it below when prompted")
+                    print("3. After authorizing, you'll be redirected to localhost (page may not load)")
+                    print("4. Copy the ENTIRE URL from your browser's address bar")
+                    print("5. Paste it below when prompted")
                     print("="*60)
 
-                    # Get authorization code from user
-                    auth_code = input("\nEnter the authorization code: ").strip()
+                    # Get authorization response URL from user
+                    auth_response = input("\nPaste the entire redirect URL here: ").strip()
+
+                    # Extract the code from the URL
+                    if 'code=' in auth_response:
+                        auth_code = auth_response.split('code=')[1].split('&')[0]
+                    else:
+                        auth_code = auth_response  # Assume they just pasted the code
 
                     # Exchange code for credentials
                     flow.fetch_token(code=auth_code)
