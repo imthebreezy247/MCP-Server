@@ -769,7 +769,7 @@ class GmailMCPServer:
 
         return body
 
-    async def run(self):
+    def run(self):
         """Run the MCP server"""
         print("Starting Gmail MCP Server...")
         print("Authenticating with Gmail API...")
@@ -780,19 +780,20 @@ class GmailMCPServer:
             print("Authentication successful!")
 
             # Get profile to verify connection
-            profile = await self.get_profile()
-            if profile['success']:
-                print(f"Connected to: {profile['emailAddress']}")
-                print(f"Total messages: {profile['messagesTotal']}")
-                print(f"Total threads: {profile['threadsTotal']}")
+            try:
+                profile = self.service.users().getProfile(userId='me').execute()
+                print(f"Connected to: {profile.get('emailAddress')}")
+                print(f"Total messages: {profile.get('messagesTotal')}")
+                print(f"Total threads: {profile.get('threadsTotal')}")
+            except Exception as e:
+                print(f"Could not fetch profile: {e}")
 
             print("\nGmail MCP Server is ready!")
-            print("Available tools:")
-            for tool in self.mcp.tools:
-                print(f"  - {tool.name}: {tool.description}")
+            print("Available tools: send_email, search_emails, read_email, create_draft, and more...")
+            print("\nServer is running. Press Ctrl+C to stop.")
 
-            # Run the MCP server
-            await self.mcp.run()
+            # Run the MCP server (this already handles async internally)
+            self.mcp.run()
 
         except Exception as e:
             print(f"Error starting server: {e}")
@@ -835,7 +836,7 @@ def main():
     else:
         # Set manual auth flag for the server
         server._manual_auth = args.manual_auth
-        asyncio.run(server.run())
+        server.run()
 
 if __name__ == "__main__":
     main()
