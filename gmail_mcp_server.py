@@ -105,7 +105,7 @@ class GmailMCPServer:
                     flow.fetch_token(code=auth_code)
                     creds = flow.credentials
 
-                    print("✓ Authentication successful!")
+                    print("[OK] Authentication successful!")
                 else:
                     # Try automatic flow first
                     try:
@@ -118,7 +118,7 @@ class GmailMCPServer:
             # Save the credentials for the next run
             with open(TOKEN_PATH, 'w') as token:
                 token.write(creds.to_json())
-                print(f"✓ Credentials saved to {TOKEN_PATH}")
+                print(f"[OK] Credentials saved to {TOKEN_PATH}")
 
         self.service = build('gmail', 'v1', credentials=creds)
         return True
@@ -820,18 +820,15 @@ def main():
         print("Testing Gmail authentication...")
         try:
             server.authenticate(manual_auth=args.manual_auth)
-            profile_result = asyncio.run(server.get_profile())
-            if profile_result['success']:
-                print(f"✓ Authentication successful!")
-                print(f"✓ Connected to: {profile_result['emailAddress']}")
-                print(f"✓ Total messages: {profile_result['messagesTotal']}")
-                print(f"✓ Total threads: {profile_result['threadsTotal']}")
-                print("\nGmail MCP Server is ready to use!")
-            else:
-                print(f"✗ Failed to get profile: {profile_result.get('error', 'Unknown error')}")
-                sys.exit(1)
+            # Get profile directly from service
+            profile = server.service.users().getProfile(userId='me').execute()
+            print(f"[OK] Authentication successful!")
+            print(f"[OK] Connected to: {profile['emailAddress']}")
+            print(f"[OK] Total messages: {profile.get('messagesTotal', 0)}")
+            print(f"[OK] Total threads: {profile.get('threadsTotal', 0)}")
+            print("\nGmail MCP Server is ready to use!")
         except Exception as e:
-            print(f"✗ Authentication failed: {e}")
+            print(f"[ERROR] Authentication failed: {e}")
             sys.exit(1)
     else:
         # Set manual auth flag for the server

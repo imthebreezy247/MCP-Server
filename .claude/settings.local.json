@@ -13,7 +13,11 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(kill:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(C:UsersshannAppDataLocalProgramsPythonPython312python.exe --version)",
+      "Bash(/c/Users/shann/AppData/Local/Programs/Python/Python312/python.exe --version)",
+      "Bash(/c/Users/shann/AppData/Local/Programs/Python/Python312/python.exe gmail_mcp_server.py --test-auth)",
+      "Bash(/c/Users/shann/AppData/Local/Programs/Python/Python312/python.exe gmail_mcp_server.py)"
     ],
     "deny": [],
     "ask": []
