@@ -32,9 +32,12 @@ from email import encoders
 # Gmail API scope - full access to Gmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
-# Token storage path
-TOKEN_PATH = 'token.json'
-CREDENTIALS_PATH = 'credentials.json'
+# Get the directory where this script is located
+SCRIPT_DIR = Path(__file__).parent.absolute()
+
+# Token storage path - use absolute paths
+TOKEN_PATH = SCRIPT_DIR / 'token.json'
+CREDENTIALS_PATH = SCRIPT_DIR / 'credentials.json'
 
 class GmailMCPServer:
     """Gmail MCP Server implementation"""
@@ -57,7 +60,7 @@ class GmailMCPServer:
         # If there are no (valid) credentials available, let the user log in
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
-                print("Refreshing expired credentials...")
+                print("Refreshing expired credentials...", file=sys.stderr)
                 creds.refresh(Request())
             else:
                 if not os.path.exists(CREDENTIALS_PATH):
@@ -70,11 +73,11 @@ class GmailMCPServer:
 
                 if manual_auth:
                     # Manual authentication flow for WSL/headless environments
-                    print("\n" + "="*60)
-                    print("MANUAL OAUTH AUTHENTICATION REQUIRED")
-                    print("="*60)
-                    print("Since automatic browser opening failed, please follow these steps:")
-                    print("\n1. Copy the URL below and paste it into a web browser:")
+                    print("\n" + "="*60, file=sys.stderr)
+                    print("MANUAL OAUTH AUTHENTICATION REQUIRED", file=sys.stderr)
+                    print("="*60, file=sys.stderr)
+                    print("Since automatic browser opening failed, please follow these steps:", file=sys.stderr)
+                    print("\n1. Copy the URL below and paste it into a web browser:", file=sys.stderr)
 
                     # Set redirect URI for manual flow
                     flow.redirect_uri = 'http://localhost'
@@ -84,13 +87,13 @@ class GmailMCPServer:
                         access_type='offline',
                         prompt='consent'
                     )
-                    print(f"\n{auth_url}\n")
+                    print(f"\n{auth_url}\n", file=sys.stderr)
 
-                    print("2. Complete the authorization in your browser")
-                    print("3. After authorizing, you'll be redirected to localhost (page may not load)")
-                    print("4. Copy the ENTIRE URL from your browser's address bar")
-                    print("5. Paste it below when prompted")
-                    print("="*60)
+                    print("2. Complete the authorization in your browser", file=sys.stderr)
+                    print("3. After authorizing, you'll be redirected to localhost (page may not load)", file=sys.stderr)
+                    print("4. Copy the ENTIRE URL from your browser's address bar", file=sys.stderr)
+                    print("5. Paste it below when prompted", file=sys.stderr)
+                    print("="*60, file=sys.stderr)
 
                     # Get authorization response URL from user
                     auth_response = input("\nPaste the entire redirect URL here: ").strip()
@@ -105,20 +108,20 @@ class GmailMCPServer:
                     flow.fetch_token(code=auth_code)
                     creds = flow.credentials
 
-                    print("[OK] Authentication successful!")
+                    print("[OK] Authentication successful!", file=sys.stderr)
                 else:
                     # Try automatic flow first
                     try:
                         creds = flow.run_local_server(port=0)
                     except Exception as e:
-                        print(f"Automatic authentication failed: {e}")
-                        print("Falling back to manual authentication...")
+                        print(f"Automatic authentication failed: {e}", file=sys.stderr)
+                        print("Falling back to manual authentication...", file=sys.stderr)
                         return self.authenticate(manual_auth=True)
 
             # Save the credentials for the next run
             with open(TOKEN_PATH, 'w') as token:
                 token.write(creds.to_json())
-                print(f"[OK] Credentials saved to {TOKEN_PATH}")
+                print(f"[OK] Credentials saved to {TOKEN_PATH}", file=sys.stderr)
 
         self.service = build('gmail', 'v1', credentials=creds)
         return True
@@ -771,32 +774,32 @@ class GmailMCPServer:
 
     def run(self):
         """Run the MCP server"""
-        print("Starting Gmail MCP Server...")
-        print("Authenticating with Gmail API...")
+        print("Starting Gmail MCP Server...", file=sys.stderr)
+        print("Authenticating with Gmail API...", file=sys.stderr)
 
         try:
             manual_auth = getattr(self, '_manual_auth', False)
             self.authenticate(manual_auth=manual_auth)
-            print("Authentication successful!")
+            print("Authentication successful!", file=sys.stderr)
 
             # Get profile to verify connection
             try:
                 profile = self.service.users().getProfile(userId='me').execute()
-                print(f"Connected to: {profile.get('emailAddress')}")
-                print(f"Total messages: {profile.get('messagesTotal')}")
-                print(f"Total threads: {profile.get('threadsTotal')}")
+                print(f"Connected to: {profile.get('emailAddress')}", file=sys.stderr)
+                print(f"Total messages: {profile.get('messagesTotal')}", file=sys.stderr)
+                print(f"Total threads: {profile.get('threadsTotal')}", file=sys.stderr)
             except Exception as e:
-                print(f"Could not fetch profile: {e}")
+                print(f"Could not fetch profile: {e}", file=sys.stderr)
 
-            print("\nGmail MCP Server is ready!")
-            print("Available tools: send_email, search_emails, read_email, create_draft, and more...")
-            print("\nServer is running. Press Ctrl+C to stop.")
+            print("\nGmail MCP Server is ready!", file=sys.stderr)
+            print("Available tools: send_email, search_emails, read_email, create_draft, and more...", file=sys.stderr)
+            print("\nServer is running. Press Ctrl+C to stop.", file=sys.stderr)
 
             # Run the MCP server (this already handles async internally)
             self.mcp.run()
 
         except Exception as e:
-            print(f"Error starting server: {e}")
+            print(f"Error starting server: {e}", file=sys.stderr)
             raise
 
 def main():
@@ -817,18 +820,18 @@ def main():
     server = GmailMCPServer()
 
     if args.test_auth:
-        print("Testing Gmail authentication...")
+        print("Testing Gmail authentication...", file=sys.stderr)
         try:
             server.authenticate(manual_auth=args.manual_auth)
             # Get profile directly from service
             profile = server.service.users().getProfile(userId='me').execute()
-            print(f"[OK] Authentication successful!")
-            print(f"[OK] Connected to: {profile['emailAddress']}")
-            print(f"[OK] Total messages: {profile.get('messagesTotal', 0)}")
-            print(f"[OK] Total threads: {profile.get('threadsTotal', 0)}")
-            print("\nGmail MCP Server is ready to use!")
+            print(f"[OK] Authentication successful!", file=sys.stderr)
+            print(f"[OK] Connected to: {profile['emailAddress']}", file=sys.stderr)
+            print(f"[OK] Total messages: {profile.get('messagesTotal', 0)}", file=sys.stderr)
+            print(f"[OK] Total threads: {profile.get('threadsTotal', 0)}", file=sys.stderr)
+            print("\nGmail MCP Server is ready to use!", file=sys.stderr)
         except Exception as e:
-            print(f"[ERROR] Authentication failed: {e}")
+            print(f"[ERROR] Authentication failed: {e}", file=sys.stderr)
             sys.exit(1)
     else:
         # Set manual auth flag for the server
