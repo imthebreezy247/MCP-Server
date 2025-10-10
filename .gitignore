@@ -2,7 +2,9 @@
 
 # OAuth Credentials and Tokens
 credentials.json
+credentials_secondary.json
 token.json
+token_secondary.json
 client_secret*.json
 
 # Python
