@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "gmail": {
+      "command": "C:\\Users\\shann\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "args": [
+        "C:\\Coding-projects\\MCP-Server\\gmail_mcp_server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "C:\\Coding-projects\\MCP-Server",
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}
