@@ -38,7 +38,7 @@ SCRIPT_DIR = Path(__file__).parent.absolute()
 # Token storage path - use absolute paths
 # Secondary account uses separate token file
 TOKEN_PATH = SCRIPT_DIR / 'token_secondary.json'
-CREDENTIALS_PATH = SCRIPT_DIR / 'credentials.json'
+CREDENTIALS_PATH = SCRIPT_DIR / 'credentials_secondary.json'
 
 class GmailMCPServer:
     """Gmail MCP Server implementation"""
