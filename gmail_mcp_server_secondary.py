@@ -36,7 +36,8 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 SCRIPT_DIR = Path(__file__).parent.absolute()
 
 # Token storage path - use absolute paths
-TOKEN_PATH = SCRIPT_DIR / 'token.json'
+# Secondary account uses separate token file
+TOKEN_PATH = SCRIPT_DIR / 'token_secondary.json'
 CREDENTIALS_PATH = SCRIPT_DIR / 'credentials.json'
 
 class GmailMCPServer:
@@ -44,7 +45,7 @@ class GmailMCPServer:
 
     def __init__(self):
         self.service = None
-        self.mcp = FastMCP("Gmail MCP Server")
+        self.mcp = FastMCP("Gmail MCP Server (Secondary)")
         self._setup_handlers()
 
     def authenticate(self, manual_auth=False):
@@ -774,7 +775,7 @@ class GmailMCPServer:
 
     def run(self):
         """Run the MCP server"""
-        print("Starting Gmail MCP Server...", file=sys.stderr)
+        print("Starting Gmail MCP Server (Secondary)...", file=sys.stderr)
         print("Authenticating with Gmail API...", file=sys.stderr)
 
         try:
@@ -791,7 +792,7 @@ class GmailMCPServer:
             except Exception as e:
                 print(f"Could not fetch profile: {e}", file=sys.stderr)
 
-            print("\nGmail MCP Server is ready!", file=sys.stderr)
+            print("\nGmail MCP Server (Secondary) is ready!", file=sys.stderr)
             print("Available tools: send_email, search_emails, read_email, create_draft, and more...", file=sys.stderr)
             print("\nServer is running. Press Ctrl+C to stop.", file=sys.stderr)
 
@@ -804,7 +805,7 @@ class GmailMCPServer:
 
 def main():
     """Main entry point"""
-    parser = argparse.ArgumentParser(description="Gmail MCP Server")
+    parser = argparse.ArgumentParser(description="Gmail MCP Server (Secondary)")
     parser.add_argument(
         "--manual-auth",
         action="store_true",
@@ -820,7 +821,7 @@ def main():
     server = GmailMCPServer()
 
     if args.test_auth:
-        print("Testing Gmail authentication...", file=sys.stderr)
+        print("Testing Gmail authentication (Secondary)...", file=sys.stderr)
         try:
             server.authenticate(manual_auth=args.manual_auth)
             # Get profile directly from service
