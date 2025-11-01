@@ -24,7 +24,8 @@
       "Bash(/c/Users/shann/AppData/Local/Programs/Python/Python312/python.exe C:/Coding-projects/MCP-Server/gmail_mcp_server.py --test-auth)",
       "Bash(/c/Users/shann/AppData/Local/Programs/Python/Python312/python.exe gmail_mcp_server_secondary.py --test-auth)",
       "Bash(git reset:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []
