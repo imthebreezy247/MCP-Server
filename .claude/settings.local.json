@@ -19,7 +19,11 @@
       "Bash(py extract_all_clients_quick.py:*)",
       "Bash(py -m pip install:*)",
       "Bash(py -m pip:*)",
-      "Bash(C:/Users/shann/AppData/Local/Programs/Python/Python312/python.exe:*)"
+      "Bash(C:/Users/shann/AppData/Local/Programs/Python/Python312/python.exe:*)",
+      "Bash(\"C:\\Users\\shann\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" extract_jordan_clients.py)",
+      "Bash(\"C:\\Users\\shann\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -c \"import json; data = json.load(open(''jordan_clients_all.json'', encoding=''utf-8'')); print(f''Total clients: {len(data)}''); print(''\\nFirst 3 clients:''); [print(f''\\n{i+1}. {c[\"\"Name\"\"]}\\n   Phone: {c.get(\"\"Phone\"\")}\\n   Email: {c.get(\"\"Email\"\")}\\n   Premium: {c.get(\"\"Premium\"\")}\\n   Labels: {c.get(\"\"Labels\"\")}\\n   Subject: {c.get(\"\"Subject\"\", \"\"\"\")[:80]}...'') for i, c in enumerate(data[:3])]\")",
+      "Bash(\"C:\\Users\\shann\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -c:*)",
+      "Bash(\"C:\\Users\\shann\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\":*)"
     ],
     "deny": [],
     "ask": []
