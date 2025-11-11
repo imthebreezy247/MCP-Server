@@ -76,3 +76,7 @@ temp/
 # Editor backups
 *.bak
 *.orig
+
+# Data extraction results
+*_sold_deals.json
+all_sold_deals_*.json
