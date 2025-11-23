@@ -5,6 +5,8 @@ credentials.json
 credentials_secondary.json
 token.json
 token_secondary.json
+token*.json
+token*.json.*
 client_secret*.json
 
 # Python
